@@ -1,22 +1,8 @@
 # BioType — Keystroke Dynamics Biometric Authentication System
 
-> **Version 2.0.0** | Phase 2 Production Release | Build 2026-04-01
+> **Version 2.0** | Phase 2 Complete | Pure Java, Zero Dependencies
 
-A pure-Java keystroke biometric authentication system that identifies users by **how they type**, not what they type. The system captures key hold duration and inter-key flight time to build unique typing profiles and verify identity using Euclidean distance comparison.
-
----
-
-## Table of Contents
-
-- [Features](#features)
-- [Architecture](#architecture)
-- [Setup & Installation](#setup--installation)
-- [Usage Guide](#usage-guide)
-- [Admin Guide](#admin-guide)
-- [Testing](#testing)
-- [File Structure](#file-structure)
-- [Configuration](#configuration)
-- [Troubleshooting](#troubleshooting)
+A keystroke biometric authentication system that identifies users by **how they type**, not what they type. Captures key hold duration and inter-key flight time to build unique typing profiles, verified using Euclidean distance + MAD% scoring with an adaptive threshold.
 
 ---
 
@@ -24,27 +10,30 @@ A pure-Java keystroke biometric authentication system that identifies users by *
 
 ### Core Authentication
 - **Keystroke capture** using `System.nanoTime()` for nanosecond-precision timing
-- **Euclidean distance scoring** converting timing vectors to 0-100% similarity
-- **Adaptive threshold** (40-80% range) that adjusts based on authentication outcomes
+- **Euclidean distance + MAD% scoring** converting timing vectors to 0–100% similarity
+- **Adaptive threshold** (40–80%) that adjusts based on authentication outcomes
 - **Impostor detection** with bot-check, speed anomaly, rhythm analysis, and session lockout
+- **Custom passphrase support** — users can set their own phrase during enrollment
 
-### Security
+### Phase 2 — Advanced Biometrics
+- **Two-Factor Authentication (2FA)** — 6-digit OTP via `SecureRandom` with 30-second animated countdown dialog
+- **Mouse Dynamics Biometrics** — captures click duration, movement speed, scroll patterns; combined 70% keystroke + 30% mouse scoring
+- **ML-Based Adaptive Threshold** — per-user personalized thresholds using moving average of last 10 successful authentications, pattern change detection (fatigue/injury)
+
+### Premium Java Swing GUI
+- **Dark theme** with warm orange/amber accent palette
+- **Animated login screen** with glassmorphism cards, glow orbs, and floating particles
+- **Live keystroke timing graph** during authentication
+- **Circular confidence gauge** with smooth animation
+- **Admin dashboard** with 5 tabs: Users, Auth Logs, Analytics, ML Threshold, Settings
+
+### Security & Management
 - **Role-based access**: Admin (password) vs User (biometric)
 - **Input validation** against injection, path traversal, and invalid data
 - **Session lockout** after 3 consecutive failed attempts
-- **Comprehensive audit logging** with daily rotation
-
-### Analytics & Management
-- **Profile quality analysis** — typing speed, rhythm consistency, quality score
-- **Security analytics** — accuracy rates, weak profiles, anomaly detection
-- **System backup/restore** — ZIP-compressed archives of all data
-- **Configuration management** — properties-file based settings
-
-### Testing & Demo
-- **30+ unit tests** covering all components with PASS/FAIL reporting
-- **Performance benchmarks** — auth speed, 50-user stress test, memory profiling
-- **Automated demo script** — 7-step showcase of all features with synthetic data
-- **Demo data generator** — 10 users with distinct typing personalities
+- **Daily audit logging** with rotation
+- **System backup/restore** — ZIP-compressed archives
+- **All Phase 2 features togglable** from Admin Settings
 
 ---
 
@@ -52,33 +41,46 @@ A pure-Java keystroke biometric authentication system that identifies users by *
 
 ```
 com.keystroke.auth/
-├── KeystrokeAuthSystem.java    ← Main entry point
-├── User.java (abstract)        ← Base class
-│   ├── Admin.java              ← Password-based admin
-│   └── RegularUser.java        ← Biometric-authenticated user
-├── KeystrokeCapture.java       ← Timing capture engine
-├── KeystrokeProfile.java       ← Profile data model
-├── FileManager.java            ← Persistence layer
-├── SimilarityScorer.java       ← Strategy interface
+├── KeystrokeAuthSystem.java        ← Console entry point
+├── User.java (abstract)            ← Base class
+│   ├── Admin.java                  ← Password-based admin
+│   └── RegularUser.java            ← Biometric-authenticated user
+├── KeystrokeCapture.java           ← Timing capture engine
+├── KeystrokeProfile.java           ← Profile data model
+├── FileManager.java                ← Persistence layer
+├── SimilarityScorer.java           ← Strategy interface
 │   └── EuclideanSimilarityScorer.java ← Distance algorithm
-├── AuthenticationEngine.java   ← Central orchestrator
-├── ThresholdManager.java       ← Adaptive threshold
-├── ImpostorDetector.java       ← Anomaly detection
-├── AuthLogger.java             ← Audit trail
-├── AuthResult.java             ← Immutable result
-├── ProfileAnalyzer.java        ← Quality analysis
-├── AnalyticsEngine.java        ← System metrics
-├── InputValidator.java         ← Input security
-├── ConfigManager.java          ← Settings management
-├── MenuSystem.java             ← ANSI console UI
-├── BackupManager.java          ← Backup/restore
-├── DemoDataGenerator.java      ← Synthetic data
-├── DemoScript.java             ← Automated showcase
-├── TestSuite.java              ← Unit tests
-├── PerformanceTester.java      ← Benchmarks
-├── SystemConstants.java        ← Centralized constants
-├── AuthenticationException.java ← Auth errors
-└── ProfileException.java       ← Profile errors
+├── AuthenticationEngine.java       ← Central orchestrator
+├── ThresholdManager.java           ← Adaptive threshold
+├── ImpostorDetector.java           ← Anomaly detection
+├── AuthLogger.java                 ← Audit trail
+├── AuthResult.java                 ← Immutable result
+├── TwoFactorAuth.java              ← OTP generation & validation [NEW]
+├── MouseDynamicsCapture.java       ← Mouse event capture [NEW]
+├── MouseDynamicsProfile.java       ← Mouse biometric model [NEW]
+├── AdaptiveThresholdML.java        ← Per-user ML threshold [NEW]
+├── ConfigManager.java              ← Settings management
+├── BackupManager.java              ← Backup/restore
+├── ProfileAnalyzer.java / AnalyticsEngine.java
+├── InputValidator.java / SystemConstants.java
+├── DemoDataGenerator.java / DemoScript.java
+├── TestSuite.java / PerformanceTester.java
+└── gui/
+    ├── Main.java                   ← GUI entry point
+    ├── MainWindow.java             ← Application frame & card layout
+    ├── LoginPanel.java             ← Animated login screen
+    ├── EnrollmentPanel.java        ← Multi-sample keystroke enrollment
+    ├── AuthPanel.java              ← Auth with gauge, graph, 2FA
+    ├── MouseEnrollmentPanel.java   ← Interactive mouse capture [NEW]
+    ├── TwoFactorDialog.java        ← OTP countdown dialog [NEW]
+    ├── MLThresholdPanel.java       ← ML admin tab [NEW]
+    ├── AdminDashboard.java         ← 5-tab admin panel
+    ├── MonitoringPanel.java / SecurityPanel.java
+    ├── TimingGraphPanel.java / CircularGaugePanel.java
+    └── utils/
+        ├── StyleManager.java       ← Theme & color palette
+        ├── GUIUtils.java           ← Styled dialogs & tables
+        └── ChartBuilder.java       ← Pie/bar chart painter
 ```
 
 ---
@@ -90,51 +92,38 @@ com.keystroke.auth/
 - No external libraries required — pure Java implementation
 
 ### Compile
+
 ```bash
 cd Keystroke-Biometrics
-javac -d out src/com/keystroke/auth/*.java
+javac -d out src/com/keystroke/auth/*.java src/com/keystroke/auth/gui/utils/*.java src/com/keystroke/auth/gui/*.java
 ```
 
-### Run
+### Run (GUI — Recommended)
+
+```bash
+java -cp out com.keystroke.auth.gui.Main
+```
+
+### Run (Console Mode)
+
 ```bash
 java -cp out com.keystroke.auth.KeystrokeAuthSystem
 ```
 
 ### Quick Start
 1. **Compile** using the command above
-2. **Run** the application
-3. Select **Option 5 (Run Demo)** for an automated showcase
-4. Or select **Option 1 (Enroll)** to register your typing profile
+2. **Run the GUI** — the premium dark-themed login screen appears
+3. Click **Enroll** → enter username → type your passphrase 3 times
+4. Click **Authenticate** → type your passphrase → see confidence gauge
+5. Login as **admin / admin123** to access the Admin Dashboard
 
 ---
 
-## Usage Guide
+## GUI Screenshots
 
-### Main Menu
-```
-1) Enroll New User         — Register by typing the phrase 3 times
-2) User Login              — Authenticate via keystroke biometrics
-3) Admin Login             — Access admin functions (admin/admin123)
-4) View Saved Profiles     — Browse enrolled profiles with analysis
-5) Run Demo                — Automated demo with synthetic data
-6) Run Tests               — Unit tests and performance benchmarks
-7) Help                    — Detailed help screen
-8) Exit                    — Save config and exit
-```
-
-### Enrollment Process
-1. Choose option 1 from the main menu
-2. Enter a username (3-20 chars, alphanumeric + underscores)
-3. Type the standard phrase **3 times** when prompted
-4. System builds your biometric profile from averaged timing data
-5. Profile quality analysis runs automatically
-
-### Authentication Process
-1. Choose option 2 from the main menu
-2. Enter your enrolled username
-3. Type the standard phrase **once**
-4. System compares your typing pattern against stored profile
-5. Result shows: confidence %, threshold, impostor risk, PASS/FAIL
+| Login Screen | Authentication | Admin Dashboard |
+|:---:|:---:|:---:|
+| ![Login](report_figures/fig8_gui_login.png) | ![Auth](report_figures/fig9_gui_auth.png) | ![Threshold](report_figures/fig7_threshold.png) |
 
 ---
 
@@ -142,92 +131,69 @@ java -cp out com.keystroke.auth.KeystrokeAuthSystem
 
 **Login**: Username `admin`, Password `admin123`
 
-### Admin Menu Options
-| # | Function | Description |
-|---|----------|-------------|
-| 1 | View All Users | List all enrolled profiles |
-| 2 | Delete User | Remove a user's profile (with confirmation) |
-| 3 | View Auth Logs | Display today's authentication log entries |
-| 4 | Adjust Threshold | Set a new threshold (40-80%) or reset to default |
-| 5 | Daily Report | Auth attempts, success rate, per-user breakdown |
-| 6 | Threshold Status | Current threshold, adjustments, allowed range |
-| 7 | Security Analytics | Full security report with anomaly detection |
-| 8 | Configuration | View/reset system settings |
-| 9 | Create Backup | ZIP backup of all profiles, logs, settings |
-| 10 | Restore Backup | Restore system from a backup archive |
-| 11 | Logout | Return to main menu |
+### Dashboard Tabs
+
+| Tab | Description |
+|-----|-------------|
+| **Users** | View, delete, inspect enrolled profiles |
+| **Auth Logs** | Browse authentication log entries, export CSV |
+| **Analytics** | Pie chart of success/fail, stats |
+| **ML Threshold** | Per-user learning progress, confidence intervals, pattern detection |
+| **Settings** | Toggle 2FA, Mouse Dynamics, ML Threshold; adjust threshold slider; backup/restore |
+
+### Phase 2 Feature Toggles (Settings Tab)
+
+| Toggle | Effect |
+|--------|--------|
+| **Two-Factor Authentication** | OTP dialog appears after successful keystroke auth |
+| **Mouse Dynamics** | Adds mouse enrollment step + 30% weight in combined score |
+| **ML Adaptive Threshold** | Uses per-user personalized thresholds after 5+ logins |
 
 ---
 
-## Testing
+## Runtime Data
 
-### Run Unit Tests
-Select menu option **6 → 1** to run the test suite.
+All runtime data is auto-created on first launch (excluded from git):
 
-Test coverage:
-- **Keystroke Capture** — mean/stddev calculations, edge cases
-- **Profile Building** — 1, 3, and 5 sample construction
-- **Euclidean Distance** — identical, similar, different profile pairs
-- **Threshold Adjustment** — false-reject, bounds clamping, reset
-- **File Operations** — save, load, delete, missing files
-- **Authentication Engine** — genuine users, impostors, error codes
-- **Input Validator** — username rules, timing bounds, sanitization
-- **Impostor Detector** — normal, bot-like, session locking
-
-### Run Performance Benchmarks
-Select menu option **6 → 2** for benchmarks:
-- **Auth Speed** — 20-iteration average (target: <5ms)
-- **Stress Test** — 50 concurrent profiles (create, load, auth)
-- **Memory Usage** — per-profile memory footprint
-
----
-
-## File Structure
-
-### Runtime Data (auto-created)
 ```
 profiles/
-├── users/          ← .profile files (CSV-formatted timing data)
+├── users/          ← .profile + .mouse files
 ├── thresholds/     ← system_threshold.txt
 ├── logs/           ← auth_YYYY_MM_DD.txt daily logs
+├── ml/             ← {username}_learning.dat
 ├── admin/          ← config.properties
-└── backups/        ← keystroke_backup_YYYY_MM_DD.zip
-```
-
-### Source Code
-```
-src/com/keystroke/auth/    ← 27 Java source files
-out/com/keystroke/auth/    ← 30 compiled .class files
+└── backups/        ← keystroke_backup_*.zip
 ```
 
 ---
 
 ## Configuration
 
-Settings are stored in `profiles/admin/config.properties`:
+Settings in `profiles/admin/config.properties`:
 
 | Key | Default | Description |
 |-----|---------|-------------|
 | `default_threshold` | 60.0 | Authentication threshold (%) |
 | `enrollment_samples` | 3 | Typing samples per enrollment |
 | `max_failed_attempts` | 3 | Failures before session lock |
-| `session_timeout_minutes` | 30 | Session timeout |
 | `hold_weight` | 0.6 | Weight for hold timing scoring |
 | `flight_weight` | 0.4 | Weight for flight timing scoring |
-| `impostor_flag_threshold` | 70.0 | Risk score to flag suspicious |
-| `log_retention_days` | 90 | Days to keep log files |
+| `enable_2fa` | false | Two-factor authentication toggle |
+| `enable_mouse_dynamics` | false | Mouse biometrics toggle |
+| `enable_ml_threshold` | false | ML adaptive threshold toggle |
 
 ---
 
-## Troubleshooting
+## Testing
 
-| Problem | Solution |
-|---------|----------|
-| `No profile found` | Enroll the user first (Option 1) |
-| `Session locked` | Wait or ask admin to reset (Admin → threshold menu) |
-| `Low confidence scores` | Re-enroll with consistent typing (Option 2 → Re-enroll) |
-| `Compile errors` | Ensure JDK 8+ and compile all files: `javac -d out src/com/keystroke/auth/*.java` |
-| `profiles/ not created` | Directory is auto-created on first run |
+### Unit Tests (Console Mode)
+Select menu option **6 → 1** in console mode to run 30+ tests covering:
+- Keystroke capture, profile building, similarity scoring
+- Threshold adjustment, file I/O, impostor detection
+- Authentication engine, input validation
+
+### Performance Benchmarks
+Select menu option **6 → 2** for auth speed, stress tests, memory profiling.
 
 ---
 
@@ -240,8 +206,22 @@ Settings are stored in `profiles/admin/config.properties`:
 | **Strategy** | `SimilarityScorer` → `EuclideanSimilarityScorer` |
 | **Facade** | `AuthenticationEngine` wraps scorer + threshold + detector + logger |
 | **Immutable Object** | `AuthResult` (all fields final) |
-| **Exception Hierarchy** | `AuthenticationException`, `ProfileException` with error code enums |
+| **Observer** | Mouse/Keyboard listener-based capture |
+| **Exception Hierarchy** | `AuthenticationException`, `ProfileException` with error codes |
 
 ---
 
-*BioType v2.0.0 — Keystroke Dynamics Biometric Authentication*
+## Troubleshooting
+
+| Problem | Solution |
+|---------|----------|
+| `No profile found` | Enroll the user first |
+| `Session locked` | Wait or ask admin to reset |
+| `Low confidence scores` | Re-enroll with consistent typing |
+| `Compile errors` | Ensure JDK 8+; compile all 3 packages (auth, gui/utils, gui) |
+| `profiles/ not created` | Auto-created on first run |
+
+---
+
+*BioType v2.0 — Keystroke Dynamics Biometric Authentication System*
+*AIML 2nd Year Project — Pure Java, Zero Dependencies*
