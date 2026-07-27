@@ -1,0 +1,47 @@
+### Compiled Output ###
+out/
+bin/
+*.class
+
+### IntelliJ IDEA ###
+.idea/
+*.iml
+.kotlin
+
+### Eclipse ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings/
+.springBeans
+.sts4-cache
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+### VS Code ###
+.vscode/
+
+### Mac OS ###
+.DS_Store
+
+### Runtime Data (user-specific, generated at runtime) ###
+profiles/users/
+profiles/logs/
+profiles/ml/
+profiles/thresholds/
+profiles/admin/
+profiles/backups/
+
+### Large Binary Files (reports, presentations) ###
+*.pptx
+*.pdf
+*.docx
+
+### Prompt/Draft Files ###
+gamma_ppt_prompt.md
